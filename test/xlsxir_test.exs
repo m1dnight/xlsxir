@@ -157,4 +157,22 @@ defmodule XlsxirTest do
     assert map["B2"] == "pre 2008"
     assert map["B3"] == "https://msdn.microsoft.com/en-us/library/office/gg278314.aspx"
   end
+
+  @tag :foo
+  test "parses escaped unicode" do
+    {:ok, pid} = multi_extract("test/test_data/escapedUnicode.xlsx", 0)
+    on_exit(fn -> close(pid) end)
+    map = get_map(pid)
+
+    assert map["A1"] == "input"
+    assert map["A2"] == "literal"
+    assert map["A3"] == "_x000D_"
+    assert map["B1"] == "expected"
+    assert map["B2"] == "literal"
+    assert map["B3"] == "_x000D_"
+    assert map["C1"] == "received"
+    assert map["C2"] == "literal "
+    assert map["C3"] == "_x005F_x000D_"
+
+  end
 end
